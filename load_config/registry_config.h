@@ -1,0 +1,58 @@
+#include<string>
+#include<cstdint>
+#include<vector>
+#include<nlohmann/json.hpp>
+
+namespace cookrpc {
+    enum class LoadBalanceStrategy {
+        ROUND_ROBIN,
+        RANDOM,
+        WEIGHT_ROUND_ROBIN
+    };
+
+    struct RegistryInfo {
+        std::string address;
+        uint16_t port;
+    };
+
+    class ServiceRegistryConfig {
+    public:
+        ~ServiceRegistryConfig() = default;
+        ServiceRegistryConfig() = default;
+
+        bool InitRegistryConfig(const std::string &config_file);
+
+        void SetServiceName(const std::string &name) { 
+            service_name_ = name; 
+        }        
+        const std::string &GetServiceName() const { 
+            return service_name_; 
+        }
+
+        void SetServiceVersion(const std::string &version) { 
+            service_version_ = version; 
+        }        
+        const std::string &GetServiceVersion() const { 
+            return service_version_; 
+        }
+        
+        const std::vector<RegistryInfo> &GetRegistryNodes() const { 
+            return registry_nodes_; 
+        }        
+        size_t GetRegistryNodesSize() const { 
+            return registry_nodes_.size(); 
+        }
+
+        ServiceRegistryConfig(const ServiceRegistryConfig &) = delete;
+        ServiceRegistryConfig &operator=(const ServiceRegistryConfig &) = delete;
+ 
+        ServiceRegistryConfig(ServiceRegistryConfig &&) = delete;
+        ServiceRegistryConfig &operator=(ServiceRegistryConfig &&) = delete;
+
+    private:
+        std::vector<RegistryInfo> registry_nodes_;
+        std::string service_name_;
+        std::string service_version_;
+    };
+
+}
